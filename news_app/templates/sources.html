@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Источники · RSS News{% endblock %}
+{% block content %}
+<section class="grid-two">
+  <div class="panel">
+    <h1>RSS-источники</h1>
+    {% if sources %}
+      <div class="source-list">
+        {% for source in sources %}
+          <div class="source-item">
+            <div>
+              <strong>{{ source.name }}</strong>
+              <div class="muted">{{ source.category }} · {{ source.rss_url }}</div>
+            </div>
+            <form method="post" action="{{ url_for('source_toggle', source_id=source.id) }}">
+              <button class="btn" type="submit">{% if source.is_active %}Отключить{% else %}Включить{% endif %}</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Источники отсутствуют.</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Добавить источник</h2>
+    <form method="post" action="{{ url_for('sources_add') }}" class="stack-form">
+      <label>Название
+        <input type="text" name="name" placeholder="Например, Habr">
+      </label>
+      <label>RSS URL
+        <input type="url" name="rss_url" placeholder="https://example.com/rss.xml">
+      </label>
+      <label>Категория
+        <input type="text" name="category" placeholder="Например, Технологии">
+      </label>
+      <button class="btn btn-primary" type="submit">Добавить</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

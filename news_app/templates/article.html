@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}{{ item.title }} · RSS News{% endblock %}
+{% block content %}
+<article class="article-detail panel">
+  <div class="card-meta">
+    <span>{{ item.source_name }}</span>
+    {% if item.published_at %}<span>{{ item.published_at[:16].replace('T', ' ') }}</span>{% endif %}
+    {% if item.author %}<span>{{ item.author }}</span>{% endif %}
+  </div>
+  <h1>{{ item.title }}</h1>
+  <p>{{ item.summary or 'Краткое описание отсутствует.' }}</p>
+  <div class="card-actions">
+    <a class="btn btn-primary" href="{{ item.link }}" target="_blank" rel="noopener">Перейти к статье</a>
+    <form method="post" action="{{ url_for('saved_toggle', item_id=item.id) }}">
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <button class="btn" type="submit">{% if item.saved %}Убрать из сохранённых{% else %}Сохранить{% endif %}</button>
+    </form>
+  </div>
+</article>
+{% endblock %}

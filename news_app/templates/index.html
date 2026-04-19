@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Главная · RSS News{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Простой новостной сайт с RSS</h1>
+    <p>Загрузите новости из RSS-источников и просматривайте их в одном месте.</p>
+  </div>
+  <form method="post" action="{{ url_for('fetch_now') }}">
+    <button class="btn btn-primary" type="submit">Обновить новости</button>
+  </form>
+</section>
+
+<section class="panel">
+  <form method="get" class="filters">
+    <input type="text" name="q" value="{{ query }}" placeholder="Поиск по заголовку">
+    <select name="source_id">
+      <option value="">Все источники</option>
+      {% for source in sources %}
+        <option value="{{ source.id }}" {% if selected_source_id == source.id %}selected{% endif %}>{{ source.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn" type="submit">Применить</button>
+  </form>
+</section>
+
+{% if items %}
+  <section class="news-list">
+    {% for item in items %}
+      <article class="card">
+        <div class="card-meta">
+          <span>{{ item.source_name }}</span>
+          {% if item.published_at %}<span>{{ item.published_at[:16].replace('T', ' ') }}</span>{% endif %}
+          {% if item.category %}<span>{{ item.category }}</span>{% endif %}
+        </div>
+        <h2><a href="{{ url_for('article_detail', item_id=item.id) }}">{{ item.title }}</a></h2>
+        <p>{{ item.summary[:260] }}{% if item.summary|length > 260 %}…{% endif %}</p>
+        <div class="card-actions">
+          <a class="btn" href="{{ item.link }}" target="_blank" rel="noopener">Открыть оригинал</a>
+          <form method="post" action="{{ url_for('saved_toggle', item_id=item.id) }}">
+            <input type="hidden" name="next" value="{{ request.full_path }}">
+            <button class="btn" type="submit">{% if item.saved %}Убрать из сохранённых{% else %}Сохранить{% endif %}</button>
+          </form>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+
+  <nav class="pagination">
+    {% if page > 1 %}
+      <a class="btn" href="{{ url_for('index', page=page-1, source_id=selected_source_id, q=query) }}">← Назад</a>
+    {% endif %}
+    <span>Страница {{ page }} из {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a class="btn" href="{{ url_for('index', page=page+1, source_id=selected_source_id, q=query) }}">Вперёд →</a>
+    {% endif %}
+  </nav>
+{% else %}
+  <section class="empty-state panel">
+    <h2>Новостей пока нет</h2>
+    <p>Нажмите «Обновить новости», чтобы загрузить первые записи из RSS.</p>
+  </section>
+{% endif %}
+{% endblock %}

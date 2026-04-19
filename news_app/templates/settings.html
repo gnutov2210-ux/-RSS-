@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Настройки · RSS News{% endblock %}
+{% block content %}
+<section class="panel narrow">
+  <h1>Настройки</h1>
+  <form method="post" action="{{ url_for('settings_update') }}" class="stack-form">
+    <label>Новостей на странице
+      <input type="number" name="items_per_page" min="1" max="50" value="{{ settings.get('items_per_page', '10') }}">
+    </label>
+    <label>Интервал обновления (минуты)
+      <input type="number" name="update_interval_minutes" min="1" max="1440" value="{{ settings.get('update_interval_minutes', '30') }}">
+    </label>
+    <button class="btn btn-primary" type="submit">Сохранить</button>
+  </form>
+</section>
+{% endblock %}

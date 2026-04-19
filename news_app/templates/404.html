@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Не найдено · RSS News{% endblock %}
+{% block content %}
+<section class="panel narrow">
+  <h1>404</h1>
+  <p>Страница не найдена.</p>
+  <a class="btn btn-primary" href="{{ url_for('index') }}">На главную</a>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Сохранённые · RSS News{% endblock %}
+{% block content %}
+<section class="panel">
+  <h1>Сохранённые статьи</h1>
+  {% if items %}
+    <div class="news-list">
+      {% for item in items %}
+        <article class="card">
+          <div class="card-meta">
+            <span>{{ item.source_name }}</span>
+            {% if item.published_at %}<span>{{ item.published_at[:16].replace('T', ' ') }}</span>{% endif %}
+          </div>
+          <h2><a href="{{ url_for('article_detail', item_id=item.id) }}">{{ item.title }}</a></h2>
+          <div class="card-actions">
+            <a class="btn" href="{{ item.link }}" target="_blank" rel="noopener">Открыть оригинал</a>
+            <form method="post" action="{{ url_for('saved_toggle', item_id=item.id) }}">
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button class="btn" type="submit">Убрать</button>
+            </form>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Сохранённых статей пока нет.</p>
+  {% endif %}
+</section>
+{% endblock %}
